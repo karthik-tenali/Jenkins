@@ -1,0 +1,21 @@
+pipeline {
+  agent any
+  stages {
+    stage('Install Apache2') {
+      steps {
+        sh 'sudo apt update && sudo apt install -y apache2'
+      }
+    }
+    stage('Copy index.html') {
+      steps {
+        sh 'sudo cp /var/lib/jenkins/index.html /var/www/html/index.html'
+      }
+    }
+    stage('Start Apache2 Service') {
+      steps {
+        sh 'sudo systemctl start apache2'
+      }
+    }
+  }
+}
+
