@@ -8,7 +8,7 @@ pipeline {
     }
     stage('Copy index.html') {
       steps {
-        sh 'sudo cp /var/lib/jenkins/index.html /var/www/html/index.html'
+        sh 'sudo cp index.html /var/www/html/index.html'
       }
     }
     stage('Start Apache2 Service') {
