@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Checkout your GitHub repo
                 git branch: 'main', url: 'https://github.com/karthik-tenali/Jenkins.git'
             }
         }
@@ -11,7 +12,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("mywebsite:latest")
+                    // Change into mywebsite folder to find Dockerfile
+                    dir('mywebsite') {
+                        docker.build("mywebsite:latest")
+                    }
                 }
             }
         }
@@ -19,7 +23,18 @@ pipeline {
         stage('Run Container') {
             steps {
                 script {
-                    docker.image("mywebsite:latest").run('-p 8081:80')
+                    // Stop and remove any previously running container named 'mywebsite'
+                    sh '''
+                        if [ $(docker ps -q -f name=mywebsite) ]; then
+                            docker stop mywebsite
+                        fi
+                        if [ $(docker ps -a -q -f name=mywebsite) ]; then
+                            docker rm mywebsite
+                        fi
+                    '''
+
+                    // Run the Docker container on port 8081
+                    sh 'docker run -d -p 8081:80 --name mywebsite mywebsite:latest'
                 }
             }
         }
